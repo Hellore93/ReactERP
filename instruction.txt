@@ -1,9 +1,1 @@
-Do uruchomienia:
-npm run dev
 
-hasło do bazy
-qr_project_pass1
-
-
-sztorcu18@gmail.com
-test123_321
