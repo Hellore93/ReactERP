@@ -125,7 +125,7 @@ export default function App() {
 
             {menuOpen && (
               <div
-              ref={menuRef}
+                ref={menuRef}
                 style={{
                   position: "absolute",
                   top: "110%",
@@ -198,6 +198,10 @@ export default function App() {
                 <LoginPage onLogin={handleLoginSuccess} />
               )
             }
+          />
+          <Route
+            path="*"
+            element={<Navigate to={user ? "/" : "/login"} replace />}
           />
         </Routes>
       </main>
