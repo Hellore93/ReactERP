@@ -11,7 +11,7 @@ import Home from "./pages/Home.jsx";
 import { Products } from "./pages/Products.jsx";
 import { LoginPage } from "./pages/LoginPage.jsx";
 import AuthService from "./services/AuthService.jsx";
-import logo from "./assets/logo.png";
+import logo from "./assets/Logo.png";
 
 export default function App() {
   const [user, setUser] = useState(null);
