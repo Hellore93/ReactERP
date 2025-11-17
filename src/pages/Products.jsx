@@ -10,6 +10,7 @@ import { Box, IconButton } from "@mui/material";
 export const Products = () => {
   const {
     items: products,
+    picklists,
     loading,
     error,
     load,
@@ -28,6 +29,7 @@ export const Products = () => {
 
   useEffect(() => {
     if (!initialized) load();
+    console.log('products >>', products);
   }, [initialized]);
 
   const prodId = searchParams.get("id");
@@ -158,6 +160,18 @@ export const Products = () => {
                     <span>{p.description}</span>
                   </>
                 )}
+                {p.quantityOwned && (
+                  <>
+                  {", "}
+                    <strong>{p.quantityOwned}</strong>
+                  </>
+                )}
+                {p.unit && (
+                  <>
+                  {" " }
+                    <strong>{p.unit}</strong>
+                  </>
+                )}
               </div>
 
               <IconButton
@@ -178,6 +192,7 @@ export const Products = () => {
           closeEvent={handleCloseModal}
           clickedProduct={clickedProduct}
           onSave={handleProductSave}
+          picklists={picklists}
         ></Product>
       )}
     </section>

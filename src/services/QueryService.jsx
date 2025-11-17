@@ -10,6 +10,16 @@ export const QueryService = {
     return data;
   },
 
+  getUnitPicklistValue: async () => {
+    const { data, error } = await Supabase.rpc("get_enum_values", {
+      enum_name: "Unit",
+    });
+    if (error) {
+      throw new Error("Nie udało się pobrać fieldów: " + error.message);
+    }
+    return data;
+  },
+
   insertRecord: async (record, objectName) => {
     const { data, error, status } = await Supabase.from(objectName)
       .insert([record])

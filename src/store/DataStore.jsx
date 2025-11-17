@@ -26,6 +26,7 @@ export const DataStoreProvider = ({ children }) => {
         ...prev,
         [objectName]: {
           items: prev[objectName]?.items || [],
+          picklists: prev[objectName]?.picklists || [],
           initialized: prev[objectName]?.initialized || false,
           loading: true,
           error: null,
@@ -34,11 +35,13 @@ export const DataStoreProvider = ({ children }) => {
 
       try {
         const data = await QueryService.getAllRecordsByObjectName(objectName);
+        const unit = await QueryService.getUnitPicklistValue();
 
         setEntities((prev) => ({
           ...prev,
           [objectName]: {
             items: data || [],
+            picklists: {unit: unit},
             initialized: true,
             loading: false,
             error: null,

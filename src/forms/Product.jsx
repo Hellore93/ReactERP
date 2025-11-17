@@ -6,11 +6,12 @@ import {
   Snackbar,
   Alert,
   IconButton,
+  MenuItem
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 
-export const Product = ({ closeEvent, clickedProduct, onSave }) => {
+export const Product = ({ closeEvent, clickedProduct, onSave, picklists }) => {
   const [formDisabled, setFormDisabled] = useState(true);
   const [formState, setFormState] = useState({});
   const [initialState, setInitialState] = useState({});
@@ -30,6 +31,7 @@ export const Product = ({ closeEvent, clickedProduct, onSave }) => {
         quantityOwned: clickedProduct.quantityOwned ?? "",
         quantityRequested: clickedProduct.quantityRequested ?? "",
         pictureUrl: clickedProduct.pictureUrl ?? "",
+        unit: clickedProduct.unit ?? ""
       };
 
       setFormState(data);
@@ -213,13 +215,28 @@ export const Product = ({ closeEvent, clickedProduct, onSave }) => {
             />
 
             <TextField
+            select
+            label="Unit"
+            value={formState.unit ?? ""}
+            disabled={formDisabled}
+            fullWidth
+            onChange={(e) => updateField("unit", e.target.value)}
+          >
+            {picklists.unit.map((u) => (
+              <MenuItem key={u} value={u}>
+                {u}
+              </MenuItem>
+            ))}
+          </TextField>
+
+            {/* <TextField
               label="Requested Quantity"
               type="number"
               disabled={formDisabled}
               fullWidth
               value={formState.quantityRequested}
               onChange={(e) => updateField("quantityRequested", e.target.value)}
-            />
+            /> */}
           </Box>
         </Box>
       </ModalCustom>
