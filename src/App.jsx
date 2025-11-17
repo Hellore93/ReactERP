@@ -87,7 +87,7 @@ export default function App() {
   return (
     <div className="app">
       {!locationLogin && (
-        <nav className="navbar" style={{ padding: "0.5rem 1rem" }}>
+        <nav className="navbar" style={{ padding: "0.5rem 1rem", flexDirection: "row", justifyContent: "space-between" }}>
           <div className="links">
             <NavLink
               to="/"
