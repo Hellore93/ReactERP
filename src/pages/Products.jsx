@@ -29,7 +29,6 @@ export const Products = () => {
 
   useEffect(() => {
     if (!initialized) load();
-    console.log('products >>', products);
   }, [initialized]);
 
   const prodId = searchParams.get("id");

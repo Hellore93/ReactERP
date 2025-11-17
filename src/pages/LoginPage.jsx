@@ -18,16 +18,9 @@ export const LoginPage = ({ onLogin }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // zakładam, że AuthService.login robi supabase.auth.signInWithPassword
       await AuthService.login(email, password);
-
-      // po udanym logowaniu pobierz aktualnego usera
-      const {
-        data: { user },
-      } = await AuthService.getUser();
-
       setError(null);
-      onLogin(user); // 🔥 przekaż użytkownika do App
+      onLogin(await AuthService.getUser());
     } catch (err) {
       setError("Nie udało się zalogować: " + err.message);
     }

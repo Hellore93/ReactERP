@@ -28,10 +28,7 @@ export default function App() {
     const fetchUser = async () => {
       setLoading(true);
       try {
-        const {
-          data: { user },
-        } = await AuthService.getUser();
-        setUser(user);
+        setUser(await AuthService.getUser());
       } catch (err) {
         console.log("User not logged in:", err);
         setUser(null);
@@ -87,7 +84,14 @@ export default function App() {
   return (
     <div className="app">
       {!locationLogin && (
-        <nav className="navbar" style={{ padding: "0.5rem 1rem", flexDirection: "row", justifyContent: "space-between" }}>
+        <nav
+          className="navbar"
+          style={{
+            padding: "0.5rem 1rem",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
           <div className="links">
             <NavLink
               to="/"
@@ -182,7 +186,7 @@ export default function App() {
         <Routes>
           <Route
             path="/"
-            element={user ? <Home /> : <Navigate to="/login" replace />}
+            element={user ? <Home user={user}/> : <Navigate to="/login" replace />}
           />
           <Route
             path="/products"

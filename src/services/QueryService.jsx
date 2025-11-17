@@ -21,9 +21,11 @@ export const QueryService = {
   },
 
   insertRecord: async (record, objectName) => {
+    console.log('insertRecord >>', record);
     const { data, error, status } = await Supabase.from(objectName)
       .insert([record])
       .select();
+      console.log('error >>', error);
     return { data };
   },
 
@@ -56,5 +58,13 @@ export const QueryService = {
       .getPublicUrl(filePath);
 
     return publicUrl.publicUrl;
+  },
+
+  getWorkingHoursByUserId: async(userId) => {
+    const { data, error } = await Supabase.from("WorkDay")
+      .select("*")
+      .eq("userId", userId);
+    if (error) throw error;
+    return data;
   },
 };

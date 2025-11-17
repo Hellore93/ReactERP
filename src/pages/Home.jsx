@@ -1,4 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { Button } from "@mui/material";
+import { useObjectStore } from "../store/DataStore";
+import { WorkDaySection } from "../forms/WorkDay";
 
 function buildMonthMatrix(year, monthIndex) {
   const firstDay = new Date(year, monthIndex, 1);
@@ -25,14 +28,37 @@ function buildMonthMatrix(year, monthIndex) {
   return weeks;
 }
 
-export default function Home() {
+export default function Home({ user }) {
+  const {
+    items: days,
+    loadWorkingHour,
+    insert,
+    initialized,
+    
+  } = useObjectStore("WorkDay");
+
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonthIndex = now.getMonth();
   const currentDay = now.getDate();
 
   const [monthIndex, setMonthIndex] = useState(currentMonthIndex);
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [currentUser] = useState(user);
   const year = currentYear;
+
+  useEffect(() => {
+    if (!initialized) loadWorkingHour(currentUser.id);
+    console.log('days >>', days);
+  }, [initialized, loadWorkingHour, currentUser.id]);
+
+  const workDayByDate = useMemo(() => {
+    const map = new Map();
+    days.forEach((rec) => {
+      map.set(rec.workDate, rec);
+    });
+    return map;
+  }, [days]);
 
   const monthNames = [
     "styczeń",
@@ -60,6 +86,14 @@ export default function Home() {
     height: "2.5rem",
     textAlign: "center",
     padding: "0.25rem",
+    cursor: "pointer",
+  };
+
+  const handleSaveDay = async (form) => {
+    await insert({
+      ...form,
+      userId: currentUser.id,
+    });
   };
 
   return (
@@ -75,26 +109,41 @@ export default function Home() {
           gap: "0.75rem",
         }}
       >
-        <select
-          value={monthIndex}
-          onChange={(e) => setMonthIndex(parseInt(e.target.value, 10))}
+        <div
           style={{
-            padding: "0.25rem 0.5rem",
-            borderRadius: "0.375rem",
-            border: "1px solid #ccc",
+            display: "flex",
+            gap: "0.5rem",
+            alignItems: "center",
           }}
         >
-          {monthNames.map((name, idx) => (
-            <option key={name} value={idx}>
-              {name} {year}
-            </option>
-          ))}
-        </select>
+          <select
+            value={monthIndex}
+            onChange={(e) => setMonthIndex(parseInt(e.target.value, 10))}
+            style={{
+              padding: "0.6rem 0.5rem",
+              borderRadius: "0.375rem",
+              border: "1px solid #ccc",
+            }}
+          >
+            {monthNames.map((name, idx) => (
+              <option key={name} value={idx}>
+                {name} {year}
+              </option>
+            ))}
+          </select>
+          <Button
+            type="button"
+            variant="contained"
+            onClick={() => setMonthIndex(currentMonthIndex)}
+          >
+            Current month
+          </Button>
+        </div>
 
         <table
           style={{
             borderCollapse: "collapse",
-            minWidth: "280px",
+            minWidth: "340px",
             boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
           }}
         >
@@ -130,18 +179,37 @@ export default function Home() {
 
                   let cellStyle = { ...baseCellStyle };
 
-                  if (isToday) {
-                    cellStyle.backgroundColor = "#16a34a";
-                    cellStyle.color = "white";
-                    cellStyle.fontWeight = "bold";
-                  } else if (isWeekend) {
+                  if (isWeekend) {
                     cellStyle.color = "red";
                   } else {
                     cellStyle.color = "#111827";
                   }
 
+                  if (isToday) {
+                    cellStyle.border = "2px solid #16a34a";
+                  }
+
+                  let workDayRecord = null;
+                  if (day) {
+                    const dateStr = `${year}-${String(monthIndex + 1).padStart(
+                      2,
+                      "0"
+                    )}-${String(day).padStart(2, "0")}`;
+                    workDayRecord = workDayByDate.get(dateStr);
+
+                    if (workDayRecord) {
+                      cellStyle.backgroundColor = "#3b82f6";
+                      cellStyle.color = "white";
+                      cellStyle.fontWeight = "bold";
+                    }
+                  }
+
                   return (
-                    <td key={di} style={cellStyle}>
+                    <td
+                      key={di}
+                      style={cellStyle}
+                      onClick={() => isToday ? setSelectedDay({}) : setSelectedDay(workDayRecord)}
+                    >
                       {day ?? ""}
                     </td>
                   );
@@ -150,6 +218,7 @@ export default function Home() {
             ))}
           </tbody>
         </table>
+        {selectedDay && <WorkDaySection selectedDay={selectedDay} onSave={handleSaveDay}/>}
       </div>
     </section>
   );

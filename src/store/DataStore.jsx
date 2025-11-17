@@ -7,26 +7,14 @@ export const DataStoreProvider = ({ children }) => {
   const [entities, setEntities] = useState({});
 
   const loadRecords = useCallback(
-    async (objectName, { force = false } = {}) => {
-      // if (objectName === "Product") {
-      //   setEntities(prev => ({
-      //     ...prev,
-      //     Product: {
-      //       items: [],
-      //       initialized: true,
-      //       loading: false,
-      //       error: new Error("TESTOWY BŁĄD — Product jest niedostępny"),
-      //     }
-      //   }));
-      //   return;
-      // }
-
+    async (objectName, { force = false, userId } = {}) => {
       if (!force && entities[objectName]?.initialized) return;
+
       setEntities((prev) => ({
         ...prev,
         [objectName]: {
           items: prev[objectName]?.items || [],
-          picklists: prev[objectName]?.picklists || [],
+          picklists: prev[objectName]?.picklists || {},
           initialized: prev[objectName]?.initialized || false,
           loading: true,
           error: null,
@@ -34,14 +22,27 @@ export const DataStoreProvider = ({ children }) => {
       }));
 
       try {
-        const data = await QueryService.getAllRecordsByObjectName(objectName);
-        const unit = await QueryService.getUnitPicklistValue();
+        let data;
+        let picklists = {};
+        if (objectName === "Products") {
+          data = await QueryService.getAllRecordsByObjectName(objectName);
+          const unit = await QueryService.getUnitPicklistValue();
+          picklists = { unit };
+        } else if (objectName == "WorkDay") {
+          if (!userId) {
+            throw new Error("Brak userId dla obiektu WorkDay/workingHour");
+          }
+          data = await QueryService.getWorkingHoursByUserId(userId);
+        } else {
+          data = await QueryService.getAllRecordsByObjectName(objectName);
+        }
 
         setEntities((prev) => ({
           ...prev,
           [objectName]: {
+            ...(prev[objectName] || {}),
             items: data || [],
-            picklists: {unit: unit},
+            picklists,
             initialized: true,
             loading: false,
             error: null,
@@ -51,6 +52,7 @@ export const DataStoreProvider = ({ children }) => {
         setEntities((prev) => ({
           ...prev,
           [objectName]: {
+            ...(prev[objectName] || {}),
             items: prev[objectName]?.items || [],
             initialized: true,
             loading: false,
@@ -60,6 +62,13 @@ export const DataStoreProvider = ({ children }) => {
       }
     },
     [entities]
+  );
+
+  const loadWorkingHourMethod = useCallback(
+    async (objectName, userId, opts = {}) => {
+      return loadRecords(objectName, { ...opts, userId, force: true });
+    },
+    [loadRecords]
   );
 
   const updateRecordInStore = useCallback(async (objectName, record) => {
@@ -156,6 +165,7 @@ export const DataStoreProvider = ({ children }) => {
   const value = {
     entities,
     loadRecords,
+    loadWorkingHourMethod,
     updateRecordInStore,
     insertRecordInStore,
     deleteRecordInStore,
@@ -179,6 +189,7 @@ export const useObjectStore = (objectName) => {
   const {
     entities,
     loadRecords,
+    loadWorkingHourMethod,
     updateRecordInStore,
     insertRecordInStore,
     deleteRecordInStore,
@@ -195,6 +206,11 @@ export const useObjectStore = (objectName) => {
   const load = useCallback(
     (opts) => loadRecords(objectName, opts),
     [loadRecords, objectName]
+  );
+
+  const loadWorkingHour = useCallback(
+    (opts) => loadWorkingHourMethod(objectName, opts),
+    [loadWorkingHourMethod, objectName]
   );
 
   const update = useCallback(
@@ -221,6 +237,7 @@ export const useObjectStore = (objectName) => {
   return {
     ...stateForObject,
     load,
+    loadWorkingHour,
     update,
     insert,
     remove,

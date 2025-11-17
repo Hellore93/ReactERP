@@ -10,15 +10,6 @@ const AuthService = {
     return { user, session };
   },
 
-  //   signUp: async (email, password) => {
-  //     const { user, session, error } = await Supabase.auth.signUp({
-  //       email,
-  //       password,
-  //     });
-  //     if (error) throw error;
-  //     return { user, session };
-  //   },
-
   logout: async () => {
     try {
       await Supabase.auth.signOut();
@@ -28,8 +19,25 @@ const AuthService = {
     }
   },
 
-  getUser: () => {
-    return Supabase.auth.getUser();
+  getUser: async () => {
+    const {
+      data: { user },
+      error: userError,
+    } = await Supabase.auth.getUser();
+
+    if (userError) throw userError;
+    if (!user) return null;
+
+    const { data: profiles, error: profileError } = await Supabase.from(
+      "Profiles"
+    )
+      .select("*")
+      .eq("id", user.id)
+      .single();
+    if (profileError) throw profileError;
+    user.profile = profiles.role;
+
+    return user;
   },
 };
 
