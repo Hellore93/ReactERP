@@ -143,7 +143,7 @@ export default function Home({ user }) {
         <table
           style={{
             borderCollapse: "collapse",
-            minWidth: "340px",
+            minWidth: "310px",
             boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
           }}
         >

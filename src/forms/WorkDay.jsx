@@ -36,7 +36,7 @@ export function WorkDaySection({ selectedDay, onSave }) {
   };
 
   return (
-    <Box sx={{ mt: 2, minWidth: 340 }}>
+    <Box sx={{ mt: 2, minWidth: 310 }}>
       <div style={{ textAlign: "center" }}>
         {startButtonHide && (
           <Button variant="contained" onClick={handleSave}>
