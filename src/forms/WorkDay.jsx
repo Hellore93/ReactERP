@@ -3,7 +3,7 @@ import { Box, Button, TextField } from "@mui/material";
 
 export function WorkDaySection({ selectedDay, onSave }) {
   const startButtonHide = selectedDay.id == undefined;
-  const saveButtonHide = selectedDay.workEnd == undefined && !startButtonHide;
+  const saveButtonHide = selectedDay.workEnd == undefined && !startButtonHide && new Date().toISOString().slice(0, 10) == selectedDay.workDate;
   const formDisabled = selectedDay.workEnd != null;
   const [formState, setFormState] = useState({
     workDate: "",
@@ -14,9 +14,9 @@ export function WorkDaySection({ selectedDay, onSave }) {
 
   useEffect(() => {
     if (selectedDay) {
-      console.log("selectedDay >>", selectedDay);
       const now = new Date();
       const data = {
+        id: selectedDay.id ?? "",
         workDate: selectedDay.workDate ?? now.toISOString().slice(0, 10),
         workDescription: selectedDay.workDescription ?? "",
         workEnd: selectedDay.workEnd ?? "",
@@ -30,21 +30,28 @@ export function WorkDaySection({ selectedDay, onSave }) {
     setFormState((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
-  const handleSave = () => {
-    console.log("save work day", formState);
-    onSave(formState)
+  const handleStarSave = () => {
+    onSave(formState);
+  };
+
+  const handleEndSave = () => {
+    setFormState((prev) => ({
+      ...prev,
+      ["workEnd"]: new Date().toTimeString().slice(0, 5),
+    }));
+    onSave({ ...formState, workEnd: new Date().toTimeString().slice(0, 5) });
   };
 
   return (
     <Box sx={{ mt: 2, minWidth: 310 }}>
       <div style={{ textAlign: "center" }}>
         {startButtonHide && (
-          <Button variant="contained" onClick={handleSave}>
+          <Button variant="contained" onClick={handleStarSave}>
             Start day
           </Button>
         )}
         {saveButtonHide && (
-          <Button variant="contained" color="success" onClick={handleSave}>
+          <Button variant="contained" color="success" onClick={handleEndSave}>
             End day
           </Button>
         )}

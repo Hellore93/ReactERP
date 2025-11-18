@@ -33,8 +33,8 @@ export default function Home({ user }) {
     items: days,
     loadWorkingHour,
     insert,
+    update,
     initialized,
-    
   } = useObjectStore("WorkDay");
 
   const now = new Date();
@@ -49,7 +49,6 @@ export default function Home({ user }) {
 
   useEffect(() => {
     if (!initialized) loadWorkingHour(currentUser.id);
-    console.log('days >>', days);
   }, [initialized, loadWorkingHour, currentUser.id]);
 
   const workDayByDate = useMemo(() => {
@@ -90,10 +89,19 @@ export default function Home({ user }) {
   };
 
   const handleSaveDay = async (form) => {
-    await insert({
-      ...form,
-      userId: currentUser.id,
-    });
+    if (form.workEnd == "") {
+      delete form.id;
+      delete form.workEnd;
+    }
+    if (form.id == undefined) {
+      await insert({
+        ...form,
+        userId: currentUser.id,
+      });
+    } else {
+      update(form);
+    }
+    loadWorkingHour(currentUser.id)
   };
 
   return (
@@ -196,9 +204,11 @@ export default function Home({ user }) {
                       "0"
                     )}-${String(day).padStart(2, "0")}`;
                     workDayRecord = workDayByDate.get(dateStr);
-
-                    if (workDayRecord) {
+                    if (workDayRecord && !isToday) {
                       cellStyle.backgroundColor = "#3b82f6";
+                      if (workDayRecord.workEnd == null) {
+                        cellStyle.backgroundColor = "#969696ff";
+                      }
                       cellStyle.color = "white";
                       cellStyle.fontWeight = "bold";
                     }
@@ -208,7 +218,7 @@ export default function Home({ user }) {
                     <td
                       key={di}
                       style={cellStyle}
-                      onClick={() => isToday ? setSelectedDay({}) : setSelectedDay(workDayRecord)}
+                      onClick={() => setSelectedDay(!workDayRecord && isToday ? {} : workDayRecord)}
                     >
                       {day ?? ""}
                     </td>
@@ -218,7 +228,9 @@ export default function Home({ user }) {
             ))}
           </tbody>
         </table>
-        {selectedDay && <WorkDaySection selectedDay={selectedDay} onSave={handleSaveDay}/>}
+        {selectedDay && (
+          <WorkDaySection selectedDay={selectedDay} onSave={handleSaveDay} />
+        )}
       </div>
     </section>
   );
