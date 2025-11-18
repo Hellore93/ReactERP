@@ -112,7 +112,7 @@ export const Product = ({ closeEvent, clickedProduct, onSave, picklists }) => {
               </Button>
             )}
             <Button variant="contained" onClick={closeEvent}>
-              Zamknij
+              Close
             </Button>
           </>
         }

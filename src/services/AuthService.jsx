@@ -36,7 +36,8 @@ const AuthService = {
       .single();
     if (profileError) throw profileError;
     user.profile = profiles.role;
-
+    user.name = profiles.name;
+    user.lastname = profiles.lastname;
     return user;
   },
 };

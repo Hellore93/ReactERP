@@ -3,12 +3,21 @@ import { Box, Button, TextField } from "@mui/material";
 
 export function WorkDaySection({ selectedDay, onSave }) {
   const startButtonHide = selectedDay.id == undefined;
-  const saveButtonHide = selectedDay.workEnd == undefined && !startButtonHide && new Date().toISOString().slice(0, 10) == selectedDay.workDate;
+  const saveButtonHide =
+    selectedDay.workEnd == undefined &&
+    !startButtonHide &&
+    new Date().toISOString().slice(0, 10) == selectedDay.workDate;
+
   const formDisabled = selectedDay.workEnd != null;
+
   const [formState, setFormState] = useState({
     workDate: "",
     workStart: "",
     workEnd: "",
+    workDescription: "",
+  });
+
+  const [errors, setErrors] = useState({
     workDescription: "",
   });
 
@@ -28,6 +37,18 @@ export function WorkDaySection({ selectedDay, onSave }) {
 
   const updateField = (field) => (e) => {
     setFormState((prev) => ({ ...prev, [field]: e.target.value }));
+    setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const validateDescription = () => {
+    if (!formState.workDescription || formState.workDescription.trim().length < 10) {
+      setErrors((prev) => ({
+        ...prev,
+        workDescription: "Opis musi mieć minimum 10 znaków.",
+      }));
+      return false;
+    }
+    return true;
   };
 
   const handleStarSave = () => {
@@ -35,11 +56,21 @@ export function WorkDaySection({ selectedDay, onSave }) {
   };
 
   const handleEndSave = () => {
+    if (!validateDescription()) return;
+
+    const end = new Date().toTimeString().slice(0, 5);
+
+    const payload = {
+      ...formState,
+      workEnd: end,
+    };
+
     setFormState((prev) => ({
       ...prev,
-      ["workEnd"]: new Date().toTimeString().slice(0, 5),
+      workEnd: end,
     }));
-    onSave({ ...formState, workEnd: new Date().toTimeString().slice(0, 5) });
+
+    onSave(payload);
   };
 
   return (
@@ -83,6 +114,7 @@ export function WorkDaySection({ selectedDay, onSave }) {
             value={formState.workEnd}
           />
         </Box>
+
         <TextField
           label="Opis pracy"
           multiline
@@ -90,6 +122,8 @@ export function WorkDaySection({ selectedDay, onSave }) {
           minRows={2}
           value={formState.workDescription}
           onChange={updateField("workDescription")}
+          error={!!errors.workDescription}
+          helperText={errors.workDescription}
         />
       </Box>
     </Box>

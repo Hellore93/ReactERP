@@ -93,14 +93,16 @@ export default function Home({ user }) {
       delete form.id;
       delete form.workEnd;
     }
+    let record;
     if (form.id == undefined) {
-      await insert({
+      record = await insert({
         ...form,
         userId: currentUser.id,
       });
     } else {
-      update(form);
+      record = await update(form);
     }
+    setSelectedDay(record);
     loadWorkingHour(currentUser.id)
   };
 
