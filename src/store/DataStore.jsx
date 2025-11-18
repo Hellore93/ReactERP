@@ -24,7 +24,7 @@ export const DataStoreProvider = ({ children }) => {
       try {
         let data;
         let picklists = {};
-        if (objectName === "Products") {
+        if (objectName === "Product") {
           data = await QueryService.getAllRecordsByObjectName(objectName);
           const unit = await QueryService.getUnitPicklistValue();
           picklists = { unit };
