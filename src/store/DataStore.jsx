@@ -5,6 +5,7 @@ const DataStoreContext = createContext(null);
 
 export const DataStoreProvider = ({ children }) => {
   const [entities, setEntities] = useState({});
+  const resetStore = () => setEntities({});
 
   const loadRecords = useCallback(
     async (objectName, { force = false, userId } = {}) => {
@@ -170,6 +171,7 @@ export const DataStoreProvider = ({ children }) => {
     insertRecordInStore,
     deleteRecordInStore,
     uploadImageInStore,
+    resetStore
   };
 
   return (

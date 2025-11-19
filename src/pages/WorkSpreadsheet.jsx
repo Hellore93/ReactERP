@@ -15,7 +15,6 @@ export function WorkSpreadsheet({ year, monthIndex }) {
     const profilesResp = await QueryService.getAllRecordsByObjectName(
       "Profiles"
     );
-    console.log("hoursResp >>", hoursResp);
 
     setHours(hoursResp);
     setProfiles(profilesResp);
@@ -86,7 +85,7 @@ export function WorkSpreadsheet({ year, monthIndex }) {
       </h2>
 
       <FormControl fullWidth sx={{ mb: 3 }}>
-        <InputLabel>Pracownik</InputLabel>
+        <InputLabel>Worker</InputLabel>
         <Select
           label="Pracownik"
           value={selectedUser}
@@ -115,10 +114,10 @@ export function WorkSpreadsheet({ year, monthIndex }) {
           <tr>
             <th style={thStyle}>Data</th>
             <th style={thStyle}>Start</th>
-            <th style={thStyle}>Koniec</th>
-            <th style={thStyle}>Czas pracy</th>
-            <th style={thStyle}>Pracownik</th>
-            <th style={thStyle}>Opis</th>
+            <th style={thStyle}>End</th>
+            <th style={thStyle}>Working time</th>
+            <th style={thStyle}>Worker</th>
+            <th style={thStyle}>Description</th>
           </tr>
         </thead>
         <tbody>

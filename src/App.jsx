@@ -12,8 +12,10 @@ import { Products } from "./pages/Products.jsx";
 import { LoginPage } from "./pages/LoginPage.jsx";
 import AuthService from "./services/AuthService.jsx";
 import logo from "./assets/Logo.png";
+import { useDataStore } from "./store/DataStore.jsx";
 
 export default function App() {
+  const { resetStore } = useDataStore();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -72,6 +74,7 @@ export default function App() {
     } finally {
       setUser(null);
       setMenuOpen(false);
+      resetStore();
       navigate("/login", { replace: true });
     }
   };
