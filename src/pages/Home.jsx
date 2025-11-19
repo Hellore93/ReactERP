@@ -130,12 +130,20 @@ export default function Home({ user }) {
   };
 
   return (
-    <section>
-      <h1>Work progress</h1>
+    <section
+      style={{
+        maxWidth: "900px",
+        margin: "0 auto",
+        padding: "1rem",
+      }}
+    >
+      <h1 style={{ fontSize: "1.8rem", marginBottom: "1.25rem" }}>
+        Work progress
+      </h1>
 
       <div
         style={{
-          marginTop: "2rem",
+          marginTop: "0.5rem",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -145,8 +153,11 @@ export default function Home({ user }) {
         <div
           style={{
             display: "flex",
+            flexWrap: "wrap",
             gap: "0.5rem",
             alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
           }}
         >
           <select
@@ -186,7 +197,8 @@ export default function Home({ user }) {
         <table
           style={{
             borderCollapse: "collapse",
-            minWidth: "310px",
+            width: "100%",
+            maxWidth: "360px",
             boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
           }}
         >

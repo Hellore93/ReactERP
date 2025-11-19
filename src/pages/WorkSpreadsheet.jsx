@@ -79,7 +79,15 @@ export function WorkSpreadsheet({ year, monthIndex }) {
   };
 
   return (
-    <Box sx={{ mt: 4, maxWidth: 800, margin: "0 auto" }}>
+    <Box
+      sx={{
+        mt: 4,
+        maxWidth: 900,
+        mx: "auto",
+        px: { xs: 1, md: 0 },
+        width: "100%",
+      }}
+    >
       <h2>
         Timesheet – {monthIndex + 1}/{year}
       </h2>
@@ -100,74 +108,87 @@ export function WorkSpreadsheet({ year, monthIndex }) {
         </Select>
       </FormControl>
 
-      <table
+      <div
         style={{
           width: "100%",
-          borderCollapse: "collapse",
-          background: "white",
+          overflowX: "auto",
           borderRadius: "8px",
-          overflow: "hidden",
           boxShadow: "0 3px 10px rgba(0,0,0,0.05)",
+          background: "white",
         }}
       >
-        <thead style={{ background: "#f3f4f6" }}>
-          <tr>
-            <th style={thStyle}>Data</th>
-            <th style={thStyle}>Start</th>
-            <th style={thStyle}>End</th>
-            <th style={thStyle}>Working time</th>
-            <th style={thStyle}>Worker</th>
-            <th style={thStyle}>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {enriched.map((row) => (
-            <tr key={row.id}>
-              <td style={tdStyle}>{row.workDate}</td>
-              <td style={tdStyle}>{row.workStart || "-"}</td>
-              <td style={tdStyle}>{row.workEnd || "-"}</td>
-              <td style={tdStyle}>
-                {calculateDuration(row.workStart, row.workEnd)}
-              </td>
-              <td style={tdStyle}>
-                {row.user ? `${row.user.name} ${row.user.lastname}` : "–"}
-              </td>
-              <td style={tdStyle}>{row.workDescription}</td>
-            </tr>
-          ))}
-
-          {enriched.length === 0 && (
+        <table
+          style={{
+            width: "100%",
+            minWidth: "650px", // tabela może scrollować się poziomo na małych ekranach
+            borderCollapse: "collapse",
+            background: "white",
+          }}
+        >
+          <thead style={{ background: "#f3f4f6" }}>
             <tr>
-              <td colSpan="5" style={{ textAlign: "center", padding: "1rem" }}>
-                Brak danych w tym miesiącu
-              </td>
+              <th style={thStyle}>Data</th>
+              <th style={thStyle}>Start</th>
+              <th style={thStyle}>End</th>
+              <th style={thStyle}>Working time</th>
+              <th style={thStyle}>Worker</th>
+              <th style={thStyle}>Description</th>
             </tr>
-          )}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td style={footerTdStyle} colSpan={3}></td>
-            <td style={footerTdStyle}>
-              <strong>{getTotalDurationLabel(enriched)}</strong>
-            </td>
-            <td style={footerTdStyle} colSpan={2}></td>
-          </tr>
-        </tfoot>
-      </table>
+          </thead>
+          <tbody>
+            {enriched.map((row) => (
+              <tr key={row.id}>
+                <td style={tdStyle}>{row.workDate}</td>
+                <td style={tdStyle}>{row.workStart || "-"}</td>
+                <td style={tdStyle}>{row.workEnd || "-"}</td>
+                <td style={tdStyle}>
+                  {calculateDuration(row.workStart, row.workEnd)}
+                </td>
+                <td style={tdStyle}>
+                  {row.user ? `${row.user.name} ${row.user.lastname}` : "–"}
+                </td>
+                <td style={tdStyle}>{row.workDescription}</td>
+              </tr>
+            ))}
+
+            {enriched.length === 0 && (
+              <tr>
+                <td
+                  colSpan="5"
+                  style={{ textAlign: "center", padding: "1rem" }}
+                >
+                  Brak danych w tym miesiącu
+                </td>
+              </tr>
+            )}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td style={footerTdStyle} colSpan={3}></td>
+              <td style={footerTdStyle}>
+                <strong>{getTotalDurationLabel(enriched)}</strong>
+              </td>
+              <td style={footerTdStyle} colSpan={2}></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </Box>
   );
 }
 
 const thStyle = {
-  padding: "10px 6px",
+  padding: "8px 6px",
   borderBottom: "1px solid #ddd",
   textAlign: "left",
   fontWeight: "bold",
+  fontSize: "0.85rem",
 };
 
 const tdStyle = {
-  padding: "8px 6px",
+  padding: "6px 6px",
   borderBottom: "1px solid #eee",
+  fontSize: "0.85rem",
 };
 
 const footerTdStyle = {
