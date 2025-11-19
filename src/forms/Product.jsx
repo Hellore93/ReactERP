@@ -69,7 +69,7 @@ export function Product({ closeEvent, clickedProduct, onSave, picklists }) {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
-      setToastMessage("Uzupełnij wymagane pola przed zapisem.");
+      setToastMessage("Please fill required inputs");
       setToastOpen(true);
       return false;
     }

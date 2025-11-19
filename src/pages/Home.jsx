@@ -130,13 +130,7 @@ export default function Home({ user }) {
   };
 
   return (
-    <section
-      style={{
-        maxWidth: "900px",
-        margin: "0 auto",
-        padding: "1rem",
-      }}
-    >
+    <section style={{ position: "relative", minHeight: "150px" }}>
       <h1 style={{ fontSize: "1.8rem", marginBottom: "1.25rem" }}>
         Work progress
       </h1>

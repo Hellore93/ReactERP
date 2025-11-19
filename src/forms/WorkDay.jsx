@@ -89,7 +89,7 @@ export function WorkDaySection({ selectedDay, onSave }) {
       </div>
       <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
         <TextField
-          label="Data pracy"
+          label="Work date"
           type="date"
           disabled
           InputLabelProps={{ shrink: true }}
@@ -106,7 +106,7 @@ export function WorkDaySection({ selectedDay, onSave }) {
             value={formState.workStart}
           />
           <TextField
-            label="Koniec"
+            label="End"
             type="time"
             disabled
             InputLabelProps={{ shrink: true }}
@@ -116,7 +116,7 @@ export function WorkDaySection({ selectedDay, onSave }) {
         </Box>
 
         <TextField
-          label="Opis pracy"
+          label="Work description"
           multiline
           disabled={formDisabled}
           minRows={2}

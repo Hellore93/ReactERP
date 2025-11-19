@@ -101,7 +101,7 @@ export function Products() {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Szukaj po nazwie lub opisie..."
+          placeholder="Search by name"
           style={{
             width: "100%",
             maxWidth: "400px",
