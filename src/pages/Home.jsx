@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import { useObjectStore } from "../store/DataStore";
 import { WorkDaySection } from "../forms/WorkDay";
+import { WorkSpreadsheet } from "../pages/WorkSpreadsheet";
 
 function buildMonthMatrix(year, monthIndex) {
   const firstDay = new Date(year, monthIndex, 1);
@@ -41,11 +42,12 @@ export default function Home({ user }) {
   const currentYear = now.getFullYear();
   const currentMonthIndex = now.getMonth();
   const currentDay = now.getDate();
+  const isAdmin = user.profile === "admin";
 
   const [monthIndex, setMonthIndex] = useState(currentMonthIndex);
+  const [year, setYear] = useState(currentYear);
   const [selectedDay, setSelectedDay] = useState(null);
   const [currentUser] = useState(user);
-  const year = currentYear;
 
   useEffect(() => {
     if (!initialized) loadWorkingHour(currentUser.id);
@@ -73,6 +75,27 @@ export default function Home({ user }) {
     "listopad",
     "grudzień",
   ];
+
+  const monthOptions = useMemo(() => {
+    const opts = [];
+    const maxMonthsBack = 24;
+    const cursor = new Date(currentYear, currentMonthIndex, 1);
+
+    for (let i = 0; i < maxMonthsBack; i++) {
+      const y = cursor.getFullYear();
+      const m = cursor.getMonth();
+
+      opts.push({
+        year: y,
+        monthIndex: m,
+        value: `${y}-${String(m).padStart(2, "0")}`,
+        label: `${monthNames[m]} ${y}`,
+      });
+      cursor.setMonth(cursor.getMonth() - 1);
+    }
+
+    return opts;
+  }, [currentYear, currentMonthIndex]);
 
   const weeks = useMemo(
     () => buildMonthMatrix(year, monthIndex),
@@ -103,7 +126,7 @@ export default function Home({ user }) {
       record = await update(form);
     }
     setSelectedDay(record);
-    loadWorkingHour(currentUser.id)
+    loadWorkingHour(currentUser.id);
   };
 
   return (
@@ -127,24 +150,34 @@ export default function Home({ user }) {
           }}
         >
           <select
-            value={monthIndex}
-            onChange={(e) => setMonthIndex(parseInt(e.target.value, 10))}
+            value={`${year}-${String(monthIndex).padStart(2, "0")}`}
+            onChange={(e) => {
+              const [yStr, mStr] = e.target.value.split("-");
+              const y = Number(yStr);
+              const m = Number(mStr);
+              setYear(y);
+              setMonthIndex(m);
+            }}
             style={{
               padding: "0.6rem 0.5rem",
               borderRadius: "0.375rem",
               border: "1px solid #ccc",
             }}
           >
-            {monthNames.map((name, idx) => (
-              <option key={name} value={idx}>
-                {name} {year}
+            {monthOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
               </option>
             ))}
           </select>
+
           <Button
             type="button"
             variant="contained"
-            onClick={() => setMonthIndex(currentMonthIndex)}
+            onClick={() => {
+              setYear(currentYear);
+              setMonthIndex(currentMonthIndex);
+            }}
           >
             Current month
           </Button>
@@ -220,7 +253,11 @@ export default function Home({ user }) {
                     <td
                       key={di}
                       style={cellStyle}
-                      onClick={() => setSelectedDay(!workDayRecord && isToday ? {} : workDayRecord)}
+                      onClick={() =>
+                        setSelectedDay(
+                          !workDayRecord && isToday ? {} : workDayRecord
+                        )
+                      }
                     >
                       {day ?? ""}
                     </td>
@@ -230,9 +267,10 @@ export default function Home({ user }) {
             ))}
           </tbody>
         </table>
-        {selectedDay && (
+        {!isAdmin && selectedDay && (
           <WorkDaySection selectedDay={selectedDay} onSave={handleSaveDay} />
         )}
+        {isAdmin && <WorkSpreadsheet year={year} monthIndex={monthIndex} />}
       </div>
     </section>
   );

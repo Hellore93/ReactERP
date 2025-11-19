@@ -21,11 +21,9 @@ export const QueryService = {
   },
 
   insertRecord: async (record, objectName) => {
-    console.log('insertRecord >>', record);
     const { data, error, status } = await Supabase.from(objectName)
       .insert([record])
       .select();
-      console.log('error >>', error);
     return { data };
   },
 
@@ -64,6 +62,24 @@ export const QueryService = {
     const { data, error } = await Supabase.from("WorkDay")
       .select("*")
       .eq("userId", userId);
+    if (error) throw error;
+    return data;
+  },
+
+  getWorkingHoursByUserAndMonth: async (year, monthIndex) => {
+    const fromDate = new Date(year, monthIndex, 1);
+    const toDate = new Date(year, monthIndex + 1, 1);
+
+    const fromStr = fromDate.toISOString().slice(0, 10);
+    const toStr = toDate.toISOString().slice(0, 10);
+
+    const { data, error } = await Supabase
+      .from("WorkDay")
+      .select("*")
+      .gte("workDate", fromStr)
+      .lt("workDate", toStr)
+      .order("workDate", { ascending: true });
+
     if (error) throw error;
     return data;
   },

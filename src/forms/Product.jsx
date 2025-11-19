@@ -11,7 +11,7 @@ import {
 import { useState, useEffect } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 
-export const Product = ({ closeEvent, clickedProduct, onSave, picklists }) => {
+export function Product({ closeEvent, clickedProduct, onSave, picklists }) {
   const [formDisabled, setFormDisabled] = useState(true);
   const [formState, setFormState] = useState({});
   const [initialState, setInitialState] = useState({});
@@ -121,13 +121,13 @@ export const Product = ({ closeEvent, clickedProduct, onSave, picklists }) => {
           <Box
             sx={{
               display: "flex",
-              justifyContent: "center", // <-- centrowanie w poziomie
+              justifyContent: "center",
               marginBottom: "1rem",
             }}
           >
             <Box
               sx={{
-                position: "relative", // dla X
+                position: "relative",
                 display: "inline-block",
               }}
             >

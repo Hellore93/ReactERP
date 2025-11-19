@@ -7,7 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, IconButton } from "@mui/material";
 
-export const Products = () => {
+export function Products() {
   const {
     items: products,
     picklists,

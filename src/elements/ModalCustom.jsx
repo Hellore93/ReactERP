@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-export const ModalCustom = ({
+export function ModalCustom({
   isOpen,
   closeEvent,
   title,
@@ -16,7 +16,7 @@ export const ModalCustom = ({
   actions,
   maxWidth = "sm",
   fullWidth = true,
-}) => {
+}) {
   return (
     <Dialog
       open={isOpen}
@@ -56,4 +56,4 @@ export const ModalCustom = ({
       </DialogActions>
     </Dialog>
   );
-};
+}

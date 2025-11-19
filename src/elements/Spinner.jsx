@@ -1,7 +1,7 @@
 import { CircularProgress } from "@mui/material";
 import "./Spinner.css";
 
-export const Spinner = () => {
+export function Spinner() {
   return (
     <div className="loading-overlay">
       <div className="loading-message">
