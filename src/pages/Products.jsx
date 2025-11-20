@@ -7,8 +7,9 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, IconButton } from "@mui/material";
 import { ConfirmDialog } from "../elements/ConfirmDialog";
+import { FeatureGuard } from "../utils/Permissions";
 
-export function Products() {
+export function Products({ user }) {
   const {
     items: products,
     picklists,
@@ -27,6 +28,7 @@ export function Products() {
   const [openInsertModal, setOpenInsertModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [currentUser] = useState(user);
 
   const navigate = useNavigate();
 
@@ -176,26 +178,32 @@ export function Products() {
                 )}
                 {p.quantityOwned && (
                   <>
-                  {", "}
+                    {", "}
                     <strong>{p.quantityOwned}</strong>
                   </>
                 )}
                 {p.unit && (
                   <>
-                  {" " }
+                    {" "}
                     <strong>{p.unit}</strong>
                   </>
                 )}
               </div>
 
-              <IconButton
-                aria-label="Delete"
-                size="small"
-                onClick={() => handleDeleteClick(p)}
-                style={{ marginLeft: "auto" }}
+              <FeatureGuard
+                feature="products"
+                action="delete"
+                profile={currentUser}
               >
-                <DeleteIcon fontSize="small" style={{ color: "red" }}/>
-              </IconButton>
+                <IconButton
+                  aria-label="Delete"
+                  size="small"
+                  onClick={() => handleDeleteClick(p)}
+                  style={{ marginLeft: "auto" }}
+                >
+                  <DeleteIcon fontSize="small" style={{ color: "red" }} />
+                </IconButton>
+              </FeatureGuard>
             </div>
           ))}
         </ul>
@@ -207,6 +215,7 @@ export function Products() {
           clickedProduct={clickedProduct}
           onSave={handleProductSave}
           picklists={picklists}
+          user={user}
         ></Product>
       )}
       {(clickedProduct || openInsertModal) && (
@@ -216,6 +225,7 @@ export function Products() {
           clickedProduct={clickedProduct}
           onSave={handleProductSave}
           picklists={picklists}
+          user={user}
         />
       )}
 
@@ -223,9 +233,7 @@ export function Products() {
         open={deleteOpen}
         title="Delete product?"
         message={
-          deleteTarget
-            ? `Are you sure for delete "${deleteTarget.name}"?`
-            : ""
+          deleteTarget ? `Are you sure for delete "${deleteTarget.name}"?` : ""
         }
         confirmText="Delete"
         cancelText="Cancel"
@@ -234,4 +242,4 @@ export function Products() {
       />
     </section>
   );
-};
+}

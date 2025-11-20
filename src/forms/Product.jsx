@@ -6,12 +6,19 @@ import {
   Snackbar,
   Alert,
   IconButton,
-  MenuItem
+  MenuItem,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import CloseIcon from "@mui/icons-material/Close";
+import { FeatureGuard } from "../utils/Permissions";
 
-export function Product({ closeEvent, clickedProduct, onSave, picklists }) {
+export function Product({
+  closeEvent,
+  clickedProduct,
+  onSave,
+  picklists,
+  user,
+}) {
   const [formDisabled, setFormDisabled] = useState(true);
   const [formState, setFormState] = useState({});
   const [initialState, setInitialState] = useState({});
@@ -21,6 +28,7 @@ export function Product({ closeEvent, clickedProduct, onSave, picklists }) {
 
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(formState.pictureUrl || "");
+  const [currentUser] = useState(user);
 
   useEffect(() => {
     if (clickedProduct) {
@@ -31,7 +39,7 @@ export function Product({ closeEvent, clickedProduct, onSave, picklists }) {
         quantityOwned: clickedProduct.quantityOwned ?? "",
         quantityRequested: clickedProduct.quantityRequested ?? "",
         pictureUrl: clickedProduct.pictureUrl ?? "",
-        unit: clickedProduct.unit ?? ""
+        unit: clickedProduct.unit ?? "",
       };
 
       setFormState(data);
@@ -107,9 +115,19 @@ export function Product({ closeEvent, clickedProduct, onSave, picklists }) {
               </Button>
             )}
             {!isSaveButtonVisible && (
-              <Button variant="contained" color="success" onClick={handleEdit}>
-                Edit
-              </Button>
+              <FeatureGuard
+                feature="products"
+                action="edit"
+                profile={currentUser}
+              >
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={handleEdit}
+                >
+                  Edit
+                </Button>
+              </FeatureGuard>
             )}
             <Button variant="contained" onClick={closeEvent}>
               Close
@@ -140,29 +158,34 @@ export function Product({ closeEvent, clickedProduct, onSave, picklists }) {
                   display: "block",
                 }}
               />
-
-              <IconButton
-                size="small"
-                onClick={() => {
-                  setPreviewUrl("");
-                  setImageFile(null);
-                  setFormState((prev) => ({ ...prev, pictureUrl: "" }));
-                }}
-                sx={{
-                  position: "absolute",
-                  top: 4,
-                  right: 4,
-                  background: "rgba(0,0,0,0.6)",
-                  color: "white",
-                  width: 24,
-                  height: 24,
-                  "&:hover": {
-                    background: "rgba(0,0,0,0.8)",
-                  },
-                }}
+              <FeatureGuard
+                feature="products"
+                action="edit"
+                profile={currentUser}
               >
-                <CloseIcon fontSize="small" />
-              </IconButton>
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    setPreviewUrl("");
+                    setImageFile(null);
+                    setFormState((prev) => ({ ...prev, pictureUrl: "" }));
+                  }}
+                  sx={{
+                    position: "absolute",
+                    top: 4,
+                    right: 4,
+                    background: "rgba(0,0,0,0.6)",
+                    color: "white",
+                    width: 24,
+                    height: 24,
+                    "&:hover": {
+                      background: "rgba(0,0,0,0.8)",
+                    },
+                  }}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </FeatureGuard>
             </Box>
           </Box>
         )}
@@ -173,15 +196,17 @@ export function Product({ closeEvent, clickedProduct, onSave, picklists }) {
             marginBottom: "1rem",
           }}
         >
-          <Button variant="outlined" component="label">
-            Choice Picture
-            <input
-              type="file"
-              hidden
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-          </Button>
+          <FeatureGuard feature="products" action="edit" profile={currentUser}>
+            <Button variant="outlined" component="label">
+              Choice Picture
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </Button>
+          </FeatureGuard>
         </Box>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <TextField
@@ -215,19 +240,19 @@ export function Product({ closeEvent, clickedProduct, onSave, picklists }) {
             />
 
             <TextField
-            select
-            label="Unit"
-            value={formState.unit ?? ""}
-            disabled={formDisabled}
-            fullWidth
-            onChange={(e) => updateField("unit", e.target.value)}
-          >
-            {picklists.unit.map((u) => (
-              <MenuItem key={u} value={u}>
-                {u}
-              </MenuItem>
-            ))}
-          </TextField>
+              select
+              label="Unit"
+              value={formState.unit ?? ""}
+              disabled={formDisabled}
+              fullWidth
+              onChange={(e) => updateField("unit", e.target.value)}
+            >
+              {picklists.unit.map((u) => (
+                <MenuItem key={u} value={u}>
+                  {u}
+                </MenuItem>
+              ))}
+            </TextField>
 
             {/* <TextField
               label="Requested Quantity"
@@ -256,4 +281,4 @@ export function Product({ closeEvent, clickedProduct, onSave, picklists }) {
       </Snackbar>
     </>
   );
-};
+}

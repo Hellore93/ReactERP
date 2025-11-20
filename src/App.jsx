@@ -13,7 +13,6 @@ import { LoginPage } from "./pages/LoginPage.jsx";
 import AuthService from "./services/AuthService.jsx";
 import logo from "./assets/Logo.png";
 import { useDataStore } from "./store/DataStore.jsx";
-import { Bolt } from "@mui/icons-material";
 
 export default function App() {
   const { resetStore } = useDataStore();
@@ -80,11 +79,6 @@ export default function App() {
     }
   };
 
-  const handleTestClick = () => {
-    alert("Test action");
-    setMenuOpen(false);
-  };
-
   return (
     <div className="app">
       {!locationLogin && (
@@ -120,10 +114,7 @@ export default function App() {
             <button
               type="button"
               ref={logoButtonRef}
-              onClick={() => {
-                console.log("user >>", user);
-                setMenuOpen((open) => !open);
-              }}
+              onClick={() => setMenuOpen((open) => !open)}
               style={{
                 border: "none",
                 background: "transparent",
@@ -158,22 +149,6 @@ export default function App() {
                 >
                   {user.name} {user.lastname}
                 </p>
-                {/* <button
-                  type="button"
-                  onClick={handleTestClick}
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    padding: "0.5rem 0.75rem",
-                    border: "none",
-                    background: "white",
-                    textAlign: "left",
-                    cursor: "pointer",
-                    fontSize: "0.9rem",
-                  }}
-                >
-                  Test
-                </button> */}
                 <button
                   type="button"
                   onClick={handleLogout}
@@ -208,7 +183,7 @@ export default function App() {
           />
           <Route
             path="/products"
-            element={user ? <Products /> : <Navigate to="/login" replace />}
+            element={user ? <Products user={user}/> : <Navigate to="/login" replace />}
           />
 
           <Route
