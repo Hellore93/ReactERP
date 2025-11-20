@@ -120,7 +120,7 @@ export function WorkSpreadsheet({ year, monthIndex }) {
         <table
           style={{
             width: "100%",
-            minWidth: "650px", // tabela może scrollować się poziomo na małych ekranach
+            minWidth: "650px",
             borderCollapse: "collapse",
             background: "white",
           }}

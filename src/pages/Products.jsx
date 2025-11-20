@@ -6,6 +6,7 @@ import { Product } from "../forms/Product";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, IconButton } from "@mui/material";
+import { ConfirmDialog } from "../elements/ConfirmDialog";
 
 export function Products() {
   const {
@@ -24,6 +25,8 @@ export function Products() {
   const [search, setSearch] = useState("");
   const [searchParams] = useSearchParams();
   const [openInsertModal, setOpenInsertModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -72,9 +75,21 @@ export function Products() {
     handleCloseModal();
   };
 
-  const handleDelete = async (product) => {
-    if (!window.confirm(`Usunąć produkt "${product.name}"?`)) return;
-    await remove(product);
+  const handleDeleteClick = (product) => {
+    setDeleteTarget(product);
+    setDeleteOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    await remove(deleteTarget);
+    setDeleteTarget(null);
+    setDeleteOpen(false);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteTarget(null);
+    setDeleteOpen(false);
   };
 
   return (
@@ -176,7 +191,7 @@ export function Products() {
               <IconButton
                 aria-label="Delete"
                 size="small"
-                onClick={() => handleDelete(p)}
+                onClick={() => handleDeleteClick(p)}
                 style={{ marginLeft: "auto" }}
               >
                 <DeleteIcon fontSize="small" style={{ color: "red" }}/>
@@ -194,6 +209,29 @@ export function Products() {
           picklists={picklists}
         ></Product>
       )}
+      {(clickedProduct || openInsertModal) && (
+        <Product
+          isOpen={true}
+          closeEvent={handleCloseModal}
+          clickedProduct={clickedProduct}
+          onSave={handleProductSave}
+          picklists={picklists}
+        />
+      )}
+
+      <ConfirmDialog
+        open={deleteOpen}
+        title="Delete product?"
+        message={
+          deleteTarget
+            ? `Are you sure for delete "${deleteTarget.name}"?`
+            : ""
+        }
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
     </section>
   );
 };
