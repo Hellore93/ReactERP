@@ -13,6 +13,7 @@ import { LoginPage } from "./pages/LoginPage.jsx";
 import AuthService from "./services/AuthService.jsx";
 import logo from "./assets/Logo.png";
 import { useDataStore } from "./store/DataStore.jsx";
+import { Bolt } from "@mui/icons-material";
 
 export default function App() {
   const { resetStore } = useDataStore();
@@ -119,7 +120,10 @@ export default function App() {
             <button
               type="button"
               ref={logoButtonRef}
-              onClick={() => setMenuOpen((open) => !open)}
+              onClick={() => {
+                console.log("user >>", user);
+                setMenuOpen((open) => !open);
+              }}
               style={{
                 border: "none",
                 background: "transparent",
@@ -145,6 +149,15 @@ export default function App() {
                   overflow: "hidden",
                 }}
               >
+                <p
+                  style={{
+                    fontWeight: "Bold",
+                    color: "black",
+                    textAlign: "center",
+                  }}
+                >
+                  {user.name} {user.lastname}
+                </p>
                 {/* <button
                   type="button"
                   onClick={handleTestClick}
@@ -189,7 +202,9 @@ export default function App() {
         <Routes>
           <Route
             path="/"
-            element={user ? <Home user={user}/> : <Navigate to="/login" replace />}
+            element={
+              user ? <Home user={user} /> : <Navigate to="/login" replace />
+            }
           />
           <Route
             path="/products"
