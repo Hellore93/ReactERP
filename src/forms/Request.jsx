@@ -10,7 +10,7 @@ import {
   MenuItem,
 } from "@mui/material";
 
-export function Request({ closeEvent }) {
+export function Request({ closeEvent, users, onSave }) {
   const [formState, setFormState] = useState({});
   const [errors, setErrors] = useState({});
   const [toastOpen, setToastOpen] = useState(false);
@@ -18,13 +18,9 @@ export function Request({ closeEvent }) {
 
   const handleSave = () => {
     if (!validate()) return;
+    onSave(formState);
     console.log("save", formState);
   };
-
-  const [users] = useState([
-    { id: 1, name: "Niewolnik Zwykły" },
-    { id: 2, name: "Niewolnik Wspaniały" },
-  ]);
 
   const updateField = (field, value) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
@@ -39,8 +35,8 @@ export function Request({ closeEvent }) {
     if (!formState.description || !formState.description.trim()) {
       newErrors.description = "To pole jest wymagane";
     }
-    if (!formState.user || !formState.user.trim()) {
-      newErrors.user = "To pole jest wymagane";
+    if (!formState.recipient || !formState.recipient.trim()) {
+      newErrors.recipient = "To pole jest wymagane";
     }
     setErrors(newErrors);
 
@@ -113,15 +109,15 @@ export function Request({ closeEvent }) {
           <TextField
             select
             label="User"
-            error={!!errors.user}
-            helperText={errors.user}
+            error={!!errors.recipient}
+            helperText={errors.recipient}
             fullWidth
             required
-            onChange={(e) => updateField("user", e.target.value)}
+            onChange={(e) => updateField("recipient", e.target.value)}
           >
             {users.map((u) => (
-              <MenuItem key={u.id} value={u.name}>
-                {u.name}
+              <MenuItem key={u.id} value={u.id}>
+                {u.name} {u.lastname}
               </MenuItem>
             ))}
           </TextField>

@@ -19,7 +19,13 @@ import { Request } from "../src/forms/Request.jsx";
 import { useObjectStore } from "../src/store/DataStore.jsx";
 
 export default function App() {
-  const { items: requests, load, initialized } = useObjectStore("Request");
+  const {
+    items: requests,
+    load,
+    initialized,
+    insert,
+  } = useObjectStore("Request");
+  const { items: users, load: loadUsers } = useObjectStore("Profiles");
 
   const { resetStore } = useDataStore();
   const [user, setUser] = useState(null);
@@ -30,6 +36,7 @@ export default function App() {
 
   useEffect(() => {
     if (!initialized) fetchRecords();
+    console.log("users >>", users, requests);
   }, [initialized]);
 
   const location = useLocation();
@@ -43,6 +50,8 @@ export default function App() {
     user && Array.isArray(requests)
       ? requests.filter((item) => item.recipient === user.id).length
       : 0;
+  const filteredUser =
+    user && Array.isArray(users) && users.filter((item) => item.id != user.id);
 
   const fetchRecords = async () => {
     setLoading(true);
@@ -54,6 +63,7 @@ export default function App() {
     } finally {
       setLoading(false);
       load();
+      loadUsers();
     }
   };
 
@@ -106,6 +116,14 @@ export default function App() {
       resetStore();
       navigate("/login", { replace: true });
     }
+  };
+
+  const handleRequestSave = async (record) => {
+    if (record.owner == undefined || record.owner == null) {
+      record.owner = user.id;
+    }
+    insert(record);
+    setRequestForm(false);
   };
 
   return (
@@ -196,6 +214,30 @@ export default function App() {
                       style={{
                         color: "black",
                         textAlign: "center",
+                        cursor: "pointer"
+                      }}
+                    >
+                      {item.title}
+                    </p>
+                  ))}
+                <p
+                  style={{
+                    fontWeight: "Bold",
+                    color: "black",
+                    textAlign: "center",
+                  }}
+                >
+                  My requests
+                </p>
+                {requests
+                  .filter((item) => item.owner === user.id)
+                  .map((item) => (
+                    <p
+                      key={item.id}
+                      style={{
+                        color: "black",
+                        textAlign: "center",
+                        cursor: "pointer"
                       }}
                     >
                       {item.title}
@@ -306,6 +348,8 @@ export default function App() {
 
       {requestForm && (
         <Request
+          users={filteredUser}
+          onSave={handleRequestSave}
           closeEvent={() => {
             setRequestForm(false);
           }}
