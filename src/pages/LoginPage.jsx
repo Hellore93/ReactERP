@@ -22,7 +22,7 @@ export function LoginPage({ onLogin }) {
       setError(null);
       onLogin(await AuthService.getUser());
     } catch (err) {
-      setError("Nie udało się zalogować: " + err.message);
+      setError("Nie udało się zalogować");
     }
   };
 

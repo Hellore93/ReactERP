@@ -253,15 +253,6 @@ export function Product({
                 </MenuItem>
               ))}
             </TextField>
-
-            {/* <TextField
-              label="Requested Quantity"
-              type="number"
-              disabled={formDisabled}
-              fullWidth
-              value={formState.quantityRequested}
-              onChange={(e) => updateField("quantityRequested", e.target.value)}
-            /> */}
           </Box>
         </Box>
       </ModalCustom>
