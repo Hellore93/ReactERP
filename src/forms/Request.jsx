@@ -10,7 +10,7 @@ import {
   MenuItem,
 } from "@mui/material";
 
-export function Request({ closeEvent, users, onSave }) {
+export function Request({ closeEvent, user, users, onSave, record }) {
   const [formState, setFormState] = useState({});
   const [errors, setErrors] = useState({});
   const [toastOpen, setToastOpen] = useState(false);
@@ -19,7 +19,6 @@ export function Request({ closeEvent, users, onSave }) {
   const handleSave = () => {
     if (!validate()) return;
     onSave(formState);
-    console.log("save", formState);
   };
 
   const updateField = (field, value) => {
@@ -57,10 +56,11 @@ export function Request({ closeEvent, users, onSave }) {
         title="Request"
         actions={
           <>
-            <Button variant="contained" color="success" onClick={handleSave}>
-              Save
-            </Button>
-
+            {record == null && (
+              <Button variant="contained" color="success" onClick={handleSave}>
+                Save
+              </Button>
+            )}
             <Button variant="contained" onClick={closeEvent}>
               Close
             </Button>
@@ -76,8 +76,10 @@ export function Request({ closeEvent, users, onSave }) {
         >
           <TextField
             label="Title"
+            disabled={record?.title}
             error={!!errors.title}
             helperText={errors.title}
+            value={record?.title}
             fullWidth
             required
             onChange={(e) => updateField("title", e.target.value)}
@@ -92,36 +94,43 @@ export function Request({ closeEvent, users, onSave }) {
         >
           <TextField
             label="Description"
+            disabled={record?.description}
             error={!!errors.description}
             helperText={errors.description}
+            value={record?.description}
             fullWidth
             required
             onChange={(e) => updateField("description", e.target.value)}
           />
         </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            marginBottom: "1rem",
-          }}
-        >
-          <TextField
-            select
-            label="User"
-            error={!!errors.recipient}
-            helperText={errors.recipient}
-            fullWidth
-            required
-            onChange={(e) => updateField("recipient", e.target.value)}
+        {((record?.recipient && user.id != record?.recipient) ||
+          record == null) && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              marginBottom: "1rem",
+            }}
           >
-            {users.map((u) => (
-              <MenuItem key={u.id} value={u.id}>
-                {u.name} {u.lastname}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Box>
+            <TextField
+              select
+              label="User"
+              disabled={record?.recipient}
+              error={!!errors.recipient}
+              helperText={errors.recipient}
+              value={record?.recipient}
+              fullWidth
+              required
+              onChange={(e) => updateField("recipient", e.target.value)}
+            >
+              {users.map((u) => (
+                <MenuItem key={u.id} value={u.id}>
+                  {u.name} {u.lastname}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+        )}
       </ModalCustom>
       <Snackbar
         open={toastOpen}

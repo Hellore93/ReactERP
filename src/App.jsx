@@ -33,10 +33,10 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [requestOpen, setRequestOpen] = useState(false);
   const [requestForm, setRequestForm] = useState(false);
+  const [requestRecord, setRequestRecord] = useState(null);
 
   useEffect(() => {
     if (!initialized) fetchRecords();
-    console.log("users >>", users, requests);
   }, [initialized]);
 
   const location = useLocation();
@@ -211,10 +211,11 @@ export default function App() {
                   .map((item) => (
                     <p
                       key={item.id}
+                      onClick={() => setRequestRecord(item)}
                       style={{
                         color: "black",
                         textAlign: "center",
-                        cursor: "pointer"
+                        cursor: "pointer",
                       }}
                     >
                       {item.title}
@@ -234,10 +235,11 @@ export default function App() {
                   .map((item) => (
                     <p
                       key={item.id}
+                      onClick={() => setRequestRecord(item)}
                       style={{
                         color: "black",
                         textAlign: "center",
-                        cursor: "pointer"
+                        cursor: "pointer",
                       }}
                     >
                       {item.title}
@@ -346,12 +348,15 @@ export default function App() {
         </Routes>
       </main>
 
-      {requestForm && (
+      {(requestForm || requestRecord != null) && (
         <Request
+          user={user}
           users={filteredUser}
           onSave={handleRequestSave}
+          record={requestRecord}
           closeEvent={() => {
             setRequestForm(false);
+            setRequestRecord(null);
           }}
         />
       )}
